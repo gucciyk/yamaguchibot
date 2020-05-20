@@ -19,8 +19,8 @@ app = Flask(__name__)
 res = Response()
 
 # Herokuに登録済み環境変数取得
-channel_secret = os.environ["CHANNEL_SECRET"]
-channel_access_token = os.environ["CHANNEL_ACCESS_TOKEN"]
+channel_secret = os.environ["YOUR_CHANNEL_SECRET"]
+channel_access_token = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
