@@ -1,4 +1,4 @@
-bot_dict = {'ありがとう':'ドウイタシマシテ','おはよう':'オハヨウゴザイマス','げんき':'ワタシハトテモゲンキデス'}
+﻿bot_dict = {'ありがとう':'ドウイタシマシテ','おはよう':'オハヨウゴザイマス','げんき':'ワタシハトテモゲンキデス'}
 with open('trans.txt') as open_file:
     all_data = open_file.read()
 
@@ -22,15 +22,14 @@ while True:
         if key in command:
             responce = bot_dict[key]
             break
-    
-    # 空文字の判定
 
-    
+    #ばい or　byeで終了
     if 'ばい' in command:
         responce = 'またどうぞ！'
         print(responce)
         break
 
+    # 空文字の判定
     if not responce:
         responce = 'ナニヲイッテイルノデスカ...'
-        print(responce)
+    print(responce)
