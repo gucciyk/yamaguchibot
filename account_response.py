@@ -20,9 +20,8 @@ class Response:
     for key in bot_dict:
         if key in event.message.text:
             responce = bot_dict[key]
-            break
         responce = 'ゴメンナサイ'
-            break
+
 
 
 
