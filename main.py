@@ -1,5 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 import os
+import logging
 import sys
 
 from flask import Flask, request, abort
@@ -52,11 +53,10 @@ def callback():
         abort(400)
     return 'OK'
 
-"""
-LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
-reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです。 
-第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
-"""
+#LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
+#reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです。
+#第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # 入力された内容(event.message.text)に応じて返信する
@@ -65,11 +65,5 @@ def handle_message(event):
     TextSendMessage(text=os.environ[res.getResponse(event.message.text)])
     )
     
-def push_message():
-    try:
-        line_bot_api.push_message('<to>', TextSendMessage(text='Hello World!'))
-    except LineBotApiError as e:
-        pass
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
