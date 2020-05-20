@@ -18,17 +18,17 @@ app = Flask(__name__)
 res = Response()
 
 # Herokuに登録済み環境変数取得
-YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
-YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-if YOUR_CHANNEL_SECRET is None:
+channel_secret = os.environ["CHANNEL_SECRET"]
+channel_access_token = os.environ["CHANNEL_ACCESS_TOKEN"]
+if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
-if YOUR_CHANNEL_ACCESS_TOKEN is None:
+if channel_access_token is None:
     print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
     sys.exit(1)
 
-line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler(channel_secret)
 
 # LINEからの正常接続応答
 @app.route("/")
