@@ -1,35 +1,53 @@
-﻿bot_dict = {'ありがとう':'ドウイタシマシテ','おはよう':'オハヨウゴザイマス','げんき':'ワタシハトテモゲンキデス'}
-with open('trans.txt') as open_file:
-    all_data = open_file.read()
+from flask import Flask, request, abort
+import os
 
-# 各行のリストを作る
-line_list = all_data.splitlines()
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.exceptions import (
+    InvalidSignatureError
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
 
-#読み込んだデータを辞書に追加する
-bot_dict = {}
+app = Flask(__name__)
 
-for line in line_list:
-    orig,trans = line.split(':')
-    bot_dict[orig] = trans
+#���ϐ��擾
+YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 
-while True:
-    command = input('bot> ')
-    
-    responce = ""
-    
-    #辞書のキーが含まれているかチェック
-    for key in bot_dict:
-        if key in command:
-            responce = bot_dict[key]
-            break
+line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
-    #ばい or　byeで終了
-    if 'ばい' in command:
-        responce = 'またどうぞ！'
-        print(responce)
-        break
+@app.route("/")
+def hello_world():
+    return "hello world!"
 
-    # 空文字の判定
-    if not responce:
-        responce = 'ナニヲイッテイルノデスカ...'
-    print(responce)
+@app.route("/callback", methods=['POST'])
+def callback():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+
+    return 'OK'
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=event.message.text))
+
+if __name__ == "__main__":
+#    app.run()
+    port = int(os.getenv("PORT"))
+    app.run(host="0.0.0.0", port=port)
