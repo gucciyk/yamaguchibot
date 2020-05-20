@@ -1,3 +1,4 @@
+﻿# coding: utf-8
 from flask import Flask, request, abort
 import os
 
@@ -13,7 +14,7 @@ from linebot.models import (
 
 app = Flask(__name__)
 
-#���ϐ��擾
+#環境変数取得
 YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 
