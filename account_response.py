@@ -1,22 +1,39 @@
 ﻿# -*- coding: utf-8 -*-
 
 class Response:
-    dic={"会社概要":"COMPANY",
-         "事業内容":"SERVICE",
-         "採用情報":"CAREER",
-         "コマンド":"COMMAND",
-         "おはよう":"5",
-         "こんにちは":"5",
-         "こんばんは":"5",
-         "こんにちわ":"6",
-         "こんばんわ":"6"
-         }
-    count=0
-    
-    def getResponse(self,text):
-        if self.count >= 4:
-            self.count = 0
-        self.count += 1
+    with open('trans.txt') as open_file:
+        all_data = open_file.read()
+
+    # 各行のリストを作る
+    line_list = all_data.splitlines()
+
+    #読み込んだデータを辞書に追加する
+    bot_dict = {}
+
+    responce = ""
+
+    for line in line_list:
+        orig,trans = line.split(':')
+        bot_dict[orig] = trans
+
+    #辞書のキーが含まれているかチェック
+    for key in bot_dict:
+        if key in event.message.text:
+            responce = bot_dict[key]
+            break
+        responce = 'ゴメンナサイ'
+            break
+
+
+
+
+
+
+
+
+
+
+        def getResponse(self,text):
         for _dic in self.dic:
             if _dic == text:
                 return self.dic[text]

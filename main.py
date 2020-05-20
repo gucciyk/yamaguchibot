@@ -14,6 +14,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 from account_response import Response
+from trans import 
 
 app = Flask(__name__)
 res = Response()
