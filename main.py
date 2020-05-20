@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 import os
 import sys
-from account_response import Response
+
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
@@ -13,11 +13,9 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 from account_response import Response
-from postgres import Postgres
 
 app = Flask(__name__)
 res = Response()
-pg = Postgres()
 
 # Herokuに登録済み環境変数取得
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
@@ -53,12 +51,6 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-
-# フォローされたらDBへユーザー情報登録
-@handler.add(FollowEvent)
-def handle_follow(event):
-    if not pg.is_user_exists(event.source.user_id):
-        pg.register_user(event.source.user_id)
 
 """
 LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
