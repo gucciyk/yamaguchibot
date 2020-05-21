@@ -16,10 +16,10 @@ class Response:
         orig,trans = line.split(':')
         bot_dict[orig] = trans
 
-        def getResponse(self,text):
+    def getResponse(self,text):
         for _dic in self.dic:
             if _dic == text:
                 return self.dic[text]
             else:
-                return str("該当ありません")
+                return str("")
 
