@@ -52,16 +52,27 @@ def callback():
         abort(400)
     return 'OK'
 
-#LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
-#reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです。
-#第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
+# LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
+# reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです。
+# 第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 入力された内容(event.message.text)に応じて返信する
+
+    # 入力された内容(event.message.text)が外部ファイルtrans.txtに含まれているかチェック
+    for key in bot_dict:
+        if key in event.message.text:
+            responce = bot_dict[key]
+        else:
+            responce = 'ゴメンナサイ'
+
+    # 上記がaccount_response.pyからの戻り値による判断部分
+
     line_bot_api.reply_message(
     event.reply_token,
-    TextSendMessage(text=os.environ[res.getResponse(event.message.text)])
+    # テキストから判断した回答文で返信する場合
+    TextSendMessage(text=responce)
+    # オウム返しの場合 TextSendMessage(text=os.environ[res.getResponse(event.message.text)])
     )
     
 if __name__ == "__main__":
