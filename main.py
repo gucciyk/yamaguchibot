@@ -1,8 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
+import os
+import logging
+import sys
 
-# インポートするライブラリ
 from flask import Flask, request, abort
-
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -10,15 +11,13 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackTemplateAction, MessageTemplateAction, URITemplateAction
+    MessageEvent, TextMessage, TextSendMessage,
 )
-import os
-
-# 軽量なウェブアプリケーションフレームワーク:Flask
+from account_response import Response
 app = Flask(__name__)
+res = Response()
 
-
-#環境変数からLINE Access Tokenを設定
+# Herokuに登録済み環境変数取得
 channel_secret = os.environ["YOUR_CHANNEL_SECRET"]
 channel_access_token = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 if channel_secret is None:
@@ -31,31 +30,50 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+# LINEからの正常接続応答
+@app.route("/")
+def hello_world():
+    return "hello world!"
+
+# LINEからのWebhook
 @app.route("/callback", methods=['POST'])
 def callback():
-    # get X-Line-Signature header value
+    # リクエストヘッダーから署名検証のための値を取得
     signature = request.headers['X-Line-Signature']
 
-    # get request body as text
+    # リクエストボディを取得テキストのみ
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-    # handle webhook body
+    # 署名を検証し、問題なければhandleに定義されている関数を呼び出す
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-
     return 'OK'
 
-# MessageEvent
+# LINEでMessageEvent（普通のメッセージを送信された場合）が起こった場合
+# reply_messageの第一引数のevent.reply_tokenは、イベントの応答に用いるトークンです。
+# 第二引数には、linebot.modelsに定義されている返信用のTextSendMessageオブジェクトを渡しています。
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-	line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text='「' + event.message.text + '」って何？')
-     )
 
+    # 入力された内容(event.message.text)が外部ファイルtrans.txtに含まれているかチェック
+    for key in bot_dict:
+        if key in event.message.text:
+            responce = bot_dict[key]
+        else:
+            responce = 'ゴメンナサイ'
+
+    # 上記がaccount_response.pyからの戻り値による判断部分
+
+    line_bot_api.reply_message(
+    event.reply_token,
+    # テキストから判断した回答文で返信する場合
+    TextSendMessage(text=responce)
+    # オウム返しの場合 TextSendMessage(text=os.environ[res.getResponse(event.message.text)])
+    )
+    
 if __name__ == "__main__":
-    port = int(os.getenv("PORT"))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
