@@ -16,25 +16,10 @@ class Response:
         orig,trans = line.split(':')
         bot_dict[orig] = trans
 
-    #辞書のキーが含まれているかチェック
-    for key in bot_dict:
-        if key in event.message.text:
-            responce = bot_dict[key]
-        responce = 'ゴメンナサイ'
-
-
-
-
-
-
-
-
-
-
-
         def getResponse(self,text):
         for _dic in self.dic:
             if _dic == text:
                 return self.dic[text]
-        return str(self.count)
+            else:
+                return str("該当ありません")
 
