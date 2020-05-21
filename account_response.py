@@ -1,6 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 
 class Response:
+    def getResponse(self,text):
+
     with open('trans.txt') as open_file:
         all_data = open_file.read()
 
@@ -16,10 +18,9 @@ class Response:
         orig,trans = line.split(':')
         bot_dict[orig] = trans
 
-    def getResponse(self,text):
-        for _dic in self.dic:
-            if _dic == text:
-                return self.dic[text]
-            else:
-                return str("")
+    for _dic in self.dic:
+        if _dic == text:
+            return self.dic[text]
+        else:
+            return str("")
 
